@@ -9,7 +9,6 @@ namespace ProyectoOrdinario.Clases
     {
         private List<ICarta> mano;
         private readonly IDealer dealer;
-
         public BlackjackJugador(IDealer dealer)
         {
             mano = new List<ICarta>();
