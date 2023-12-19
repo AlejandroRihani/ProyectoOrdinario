@@ -17,7 +17,7 @@ namespace ProyectoOrdinario
 
             IJuego selectedGame = choice switch
             {
-                //1 => new PokerJuego(),
+                1 => new JuegoPoker(),
                 2 => new BlackjackJuego(),
                 _ => throw new ArgumentException("Invalid choice"),
             };
@@ -28,10 +28,10 @@ namespace ProyectoOrdinario
             List<IJugador> players = new List<IJugador>();
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                IDealer dealer = ((BlackjackJuego)selectedGame).Dealer;
+                IDealer dealer = selectedGame.Dealer;
                 IJugador player = choice switch
                 {
-                    //1 => new PokerJugador(),
+                    1 => new JugadorPoker(dealer),
                     2 => new BlackjackJugador(dealer),
                     _ => throw new ArgumentException("Invalid choice"),
                 };
