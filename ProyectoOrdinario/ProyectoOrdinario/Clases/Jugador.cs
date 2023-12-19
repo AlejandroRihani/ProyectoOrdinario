@@ -7,23 +7,24 @@ using System.Threading.Tasks;
 
 namespace ProyectoOrdinario.Clases
 {
-    public class Jugador : IJugador
+    public class JugadorPoker : IJugador
     {
         private List<ICarta> mano;
 
-        public Jugador()
+        public JugadorPoker()
         {
             mano = new List<ICarta>();
         }
 
         public void RealizarJugada()
         {
-            // Implement player's move logic
+            
             Console.WriteLine("Player makes a move.");
         }
 
         public void ObtenerCartas(List<ICarta> cartas)
         {
+
             mano.AddRange(cartas);
         }
 
