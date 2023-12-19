@@ -85,8 +85,8 @@ namespace ProyectoOrdinario.Clases
 
             if (ganador != null)
             {
-                Console.WriteLine($"Ganador: {jugadores.IndexOf(ganador)} Mano: ");
-                MostrarManoJugador(ganador);
+                Console.WriteLine($"Ganador: {jugadores.IndexOf(ganador)} Mano: {TraducirRankMano(maxHandRank)}");
+                //MostrarManoJugador(ganador);
             }
             else
             {
@@ -96,20 +96,22 @@ namespace ProyectoOrdinario.Clases
 
         private int EvaluarMano(List<ICarta> mano)
         {
-            // Ordenar las cartas por valor
-            mano = mano.OrderBy(carta => (int)carta.Valor).ToList();
+            // Order the cards by value and count occurrences of each value
+            var orderedCards = mano.OrderBy(carta => (int)carta.Valor).ToList();
+            var valueCounts = orderedCards.GroupBy(carta => carta.Valor).ToDictionary(grupo => grupo.Key, grupo => grupo.Count());
 
-            if (EsEscaleraReal(mano)) return 9;
-            if (EsEscaleraColor(mano)) return 8;
-            if (EsPoker(mano)) return 7;
-            if (EsFullHouse(mano)) return 6;
+            // Check for specific combinations in decreasing order of rank
+            if (EsEscaleraReal(orderedCards)) return 9;
+            if (EsEscaleraColor(orderedCards)) return 8;
+            if (EsPoker(valueCounts)) return 7;
+            if (EsFullHouse(valueCounts)) return 6;
             if (EsColor(mano)) return 5;
-            if (EsEscalera(mano)) return 4;
-            if (EsTrio(mano)) return 3;
-            if (EsDoblePar(mano)) return 2;
-            if (EsPar(mano)) return 1;
-
-            return (int)mano.Last().Valor; // Valor de la carta más alta
+            if (EsEscalera(orderedCards)) return 4;
+            if (EsTrio(valueCounts)) return 3;
+            if (EsDoblePar(valueCounts)) return 2;
+            if (EsPar(valueCounts)) return 1;
+            return 0;
+            
         }
 
         private string TraducirRankMano(int rank)
@@ -153,41 +155,16 @@ namespace ProyectoOrdinario.Clases
             return EsColor(mano) && EsEscalera(mano);
         }
 
-        private bool EsPoker(List<ICarta> mano)
+        private bool EsPoker(Dictionary<ValoresCartasEnum, int> valueCounts)
         {
-            var grupos = mano.GroupBy(carta => carta.Valor);
-
-            foreach (var grupo in grupos)
-            {
-                if (grupo.Count() == 4)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return valueCounts.ContainsValue(4); // Check for four cards of the same value
         }
 
-        private bool EsFullHouse(List<ICarta> mano)
+        private bool EsFullHouse(Dictionary<ValoresCartasEnum, int> valueCounts)
         {
-            var grupos = mano.GroupBy(carta => carta.Valor);
-
-            bool tieneTrio = false;
-            bool tienePar = false;
-
-            foreach (var grupo in grupos)
-            {
-                if (grupo.Count() == 3)
-                {
-                    tieneTrio = true;
-                }
-                else if (grupo.Count() == 2)
-                {
-                    tienePar = true;
-                }
-            }
-
-            return tieneTrio && tienePar;
+            return valueCounts.ContainsValue(3) && valueCounts.ContainsValue(2); // Check for three cards of one value and two cards of another
         }
+
 
         private bool EsColor(List<ICarta> mano)
         {
@@ -205,52 +182,21 @@ namespace ProyectoOrdinario.Clases
             }
             return true;
         }
-
-        private bool EsTrio(List<ICarta> mano)
+        private bool EsTrio(Dictionary<ValoresCartasEnum, int> valueCounts)
         {
-            var grupos = mano.GroupBy(carta => carta.Valor);
-
-            foreach (var grupo in grupos)
-            {
-                if (grupo.Count() == 3)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return valueCounts.ContainsValue(3); // Check for three cards of the same value
         }
 
-        private bool EsDoblePar(List<ICarta> mano)
+        private bool EsDoblePar(Dictionary<ValoresCartasEnum, int> valueCounts)
         {
-            var grupos = mano.GroupBy(carta => carta.Valor);
-
-            int cantidadPares = 0;
-
-            foreach (var grupo in grupos)
-            {
-                if (grupo.Count() == 2)
-                {
-                    cantidadPares++;
-                }
-            }
-
-            return cantidadPares == 2;
+            int cantidadPares = valueCounts.Count(pair => pair.Value == 2);
+            return cantidadPares >= 2; // Check for at least two pairs
         }
 
-        private bool EsPar(List<ICarta> mano)
+        private bool EsPar(Dictionary<ValoresCartasEnum, int> valueCounts)
         {
-            var grupos = mano.GroupBy(carta => carta.Valor);
-
-            foreach (var grupo in grupos)
-            {
-                if (grupo.Count() == 2)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return valueCounts.ContainsValue(2); // Check for two cards of the same value
         }
-
         private void MostrarEstadoJuego()
         {
             Console.WriteLine("\nEstado actual del juego:");
