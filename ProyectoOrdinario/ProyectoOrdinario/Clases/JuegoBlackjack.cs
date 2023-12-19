@@ -57,6 +57,7 @@ namespace ProyectoOrdinario.Clases
             // Permitir que cada jugador realice una jugada
             foreach (var jugador in jugadores)
             {
+                Console.WriteLine($"Turno del jugador {jugadores.IndexOf(jugador)}");
                 jugador.RealizarJugada();
             }
 
@@ -91,7 +92,7 @@ namespace ProyectoOrdinario.Clases
             // Determinar al ganador
             IJugador ganador = null;
             int valorGanador = 0;
-
+            //kvp significa key value pair (par de valor y llave)
             foreach (var kvp in valoresManosJugadores)
             {
                 if (kvp.Value <= 21 && kvp.Value > valorGanador)
@@ -104,7 +105,7 @@ namespace ProyectoOrdinario.Clases
             // Mostrar el resultado
             if (valorGanador > valorManoCrupier && valorGanador <= 21)
             {
-                Console.WriteLine($"El ganador es {ganador.GetType().Name} con un valor de mano de {valorGanador}.");
+                Console.WriteLine($"El ganador es el jugador {jugadores.IndexOf(ganador)} con un valor de mano de {valorGanador}.");
             }
             else
             {
@@ -167,7 +168,7 @@ namespace ProyectoOrdinario.Clases
             // Mostrar las cartas de cada jugador
             foreach (var jugador in jugadores)
             {
-                Console.WriteLine($"Cartas de {jugador.GetType().Name}:");
+                Console.WriteLine($"Cartas del jugador {jugadores.IndexOf(jugador)}:");
                 foreach (var carta in jugador.MostrarCartas())
                 {
                     Console.WriteLine($"   {carta.Valor} de {carta.Figura}");
